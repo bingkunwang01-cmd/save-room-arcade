@@ -22,12 +22,12 @@ window.SAVE_ROOM = {
 
   // 游戏分类。color 是这个分类在网站上的标记色
   genres: [
-    { id: 'horror',   zh: '恐怖', en: 'Horror',   color: '#ff5f73' },
-    { id: 'mystery',  zh: '悬疑', en: 'Mystery',  color: '#b39cff' },
-    { id: 'survival', zh: '生存', en: 'Survival', color: '#9fd98a' },
-    { id: 'zombie',   zh: '丧尸', en: 'Zombie',   color: '#d4f25a' },
-    { id: 'casual',   zh: '休闲', en: 'Casual',   color: '#6fe3dc' },
-    { id: 'party',    zh: '娱乐', en: 'Party',    color: '#ffd166' },
+    { id: 'horror',   zh: '恐怖', en: 'Horror',   color: '#c4222a', icon: 'skull', desc: { zh: '黑暗里的追逐与惊吓', en: 'Chases and scares in the dark' } },
+    { id: 'mystery',  zh: '悬疑', en: 'Mystery',  color: '#8f7bd6', icon: 'eye',   desc: { zh: '线索、谜题和真相', en: 'Clues, puzzles and the truth' } },
+    { id: 'survival', zh: '生存', en: 'Survival', color: '#7fa86a', icon: 'flame', desc: { zh: '物资、体力和抉择', en: 'Supplies, stamina and choices' } },
+    { id: 'zombie',   zh: '丧尸', en: 'Zombie',   color: '#a4b045', icon: 'hand',  desc: { zh: '尸潮来袭，守住据点', en: 'Hold the line against the horde' } },
+    { id: 'casual',   zh: '休闲', en: 'Casual',   color: '#6fb8b2', icon: 'cup',   desc: { zh: '放松一下，随时能玩', en: 'Something lighter, any time' } },
+    { id: 'party',    zh: '娱乐', en: 'Party',    color: '#d4a64a', icon: 'dice',  desc: { zh: '和朋友一起闹', en: 'Fun with friends' } },
   ],
 
   games: [
@@ -39,7 +39,7 @@ window.SAVE_ROOM = {
       tagline: { zh: '150 本书。三层医院。唯一的出口。', en: '150 books. Three floors. One way out.' },
       genres: ['horror', 'survival'],
       // 游戏页的主题色：accent 用在按钮和标记上，glow 用在画面光晕上
-      theme: { accent: '#e2474f', glow: '#7fd39b', ink: '#f3efe8' },
+      theme: { accent: '#c4222a', glow: '#7fd39b', ink: '#e8e3d7' },
       version: '0.19',
       updated: '2026-11-18',
       platform: { zh: '安卓（ARM64）', en: 'Android (ARM64)' },

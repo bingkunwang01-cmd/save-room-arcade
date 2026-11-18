@@ -8,18 +8,19 @@
 
 | 文件 | 作用 |
 |---|---|
-| `index.html` | 首页：3D 主视觉、我的游戏、最新作品、最新动态、关于 |
+| `index.html` | 首页：3D 主视觉（雾、灰烬、提灯闪烁）、我的游戏、最新作品、最新动态、关于 |
 | `game.html?id=<游戏id>` | 每款游戏共用的详情页，内容从 `js/games.js` 读取 |
 | `js/games.js` | **所有游戏的数据都在这里**，加新游戏只改这个文件 |
 | `js/site.js` | 页面逻辑（一般不用改） |
 | `css/site.css` | 样式 |
-| `assets/site/hero.webp` | 首页主视觉（Blender Cycles 渲染：铬银 SV 字标、锁链、提灯、PS2 风格玻璃塔） |
+| `assets/site/hero.webp` | 首页主视觉（Blender Cycles 渲染：带血的旧金属 SV 字标、锈铁链、维多利亚提灯、雾中的铁丝网和路灯） |
+| `assets/site/blood.svg` | 左上角 Logo 不定时渗血的血迹贴图 |
 | `assets/site/sole-verge-keyart.webp` | Sole Verge 主视觉横幅（关于区） |
 | `assets/games/<游戏id>/` | 每款游戏的封面、截图、旋转存档图标、短片 |
-| `fonts/` | Cinzel（品牌字）和思源黑体 Bold（标题，按需分片加载），均为 SIL OFL 授权 |
+| `fonts/` | Cinzel（品牌字）、思源宋体 Bold（标题）、思源黑体 Bold（按钮和导航），中文按需分片加载，均为 SIL OFL 授权 |
 | `hollow-ward.html` | 旧链接，会自动跳到新的空寂病院页面 |
 
-首页的红蓝光带是 `index.html` 里的 SVG 曲线，坐标对应 2560×1440 的主视觉图；换主视觉时一起调整。
+导航里“游戏”展开就是分类菜单，分类来自 `js/games.js` 的 `genres`。首页提灯的闪光位置写在 `js/site.js` 的 `initLamp`（按 2560×1440 主视觉的比例坐标），换主视觉时一起调整。
 
 ## 加一款新游戏
 
@@ -30,7 +31,7 @@
    - `icon.webp`：卡片上旋转的存档图标，32 帧横向排成一条（每帧正方形）
 3. 打开 `js/games.js`，复制 `hollow-ward` 那一整段，改成新游戏的内容：
    - `id` 和文件夹同名，`no` 是作品编号（002、003……）
-   - `genres` 从这几个里选：`horror` 恐怖、`mystery` 悬疑、`survival` 生存、`zombie` 丧尸、`casual` 休闲、`party` 娱乐
+   - `genres` 从这几个里选：`horror` 恐怖、`mystery` 悬疑、`survival` 生存、`zombie` 丧尸、`casual` 休闲、`party` 娱乐（导航分类菜单和首页标签会自动更新数量）
    - `theme.accent` / `theme.glow` 是这款游戏页面的主题色
    - `downloads` 填 GitHub Release 的下载地址
 4. 提交并推送，GitHub Pages 会自动更新。
@@ -57,4 +58,4 @@ python -m http.server 8000
 ## 素材与授权
 
 - 主视觉、Logo 和旋转存档图标都用 Blender 渲染。
-- 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel) 与 [Noto Sans SC](https://github.com/notofonts/noto-cjk)，SIL Open Font License 1.1（经 Fontsource 分片）。
+- 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）。
