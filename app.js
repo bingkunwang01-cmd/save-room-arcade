@@ -13,12 +13,4 @@ for (const tag of ['全部','恐怖','悬疑','惊悚','娱乐','休闲']) {
   };
   filters.append(button);
 }
-const viewer = document.querySelector('#viewer');
-for (const button of document.querySelectorAll('.stills button')) {
-  button.onclick = () => {
-    const image = viewer.querySelector('img');
-    image.src = button.firstElementChild.src;
-    image.alt = button.firstElementChild.alt;
-    viewer.showModal();
-  };
-}
+
