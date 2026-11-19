@@ -58,5 +58,13 @@ python -m http.server 8000
 ## 素材与授权
 
 - 主视觉、Logo 和旋转存档图标都用 Blender 渲染。主视觉里的锈铁、沥青等材质和提灯、轮椅、病床、铁丝网模型来自 Poly Haven（CC0）。
-- 首页的雾、聚光灯光柱、灯闪和灰烬粒子是实时叠加的（`js/site.js` 里的 `initFog` / `initAsh`），位置跟着主视觉对齐（`HERO` 里的坐标来自渲染日志）。
+- 首页的雾、聚光灯光柱、灯闪、雨丝和溅起的水花、从 SV 上滴落的血、打雷闪电都是实时叠加的（`js/site.js` 里的 `initFog` / `initWeather` / `initLightning`），位置跟着主视觉对齐（`HERO` 里的坐标来自渲染日志）。
+- 闪电用了两张额外的渲染：`assets/site/hero-flash.webp`（只有闪电照亮的画面）和 `assets/site/hero-mask.png`（天空遮罩，让闪电出现在铁刺和树后面）。系统开了“减少动态效果”时不会打闪电。
+
+## 建议 / 写邮件
+
+首页「建议」栏可以选类型、选游戏、写内容，然后：
+
+- **写邮件发送**：在 `js/games.js` 的 `owner.email` 填上你的邮箱后才会出现，点了会打开访客的邮件程序，标题和内容都已经填好。
+- **在 GitHub 提交**：打开这个仓库的新 Issue 页面，标题和内容同样预先填好。
 - 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）。

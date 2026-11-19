@@ -18,6 +18,8 @@ window.SAVE_ROOM = {
       douyin: '',
       bilibili: '',
     },
+    // 「建议」里“写邮件发送”会发到这个邮箱；留空则只显示 GitHub 提交
+    email: '',
   },
 
   // 游戏分类。color 是这个分类在网站上的标记色

@@ -13,6 +13,29 @@
     'nav.games': ['游戏', 'Games'],
     'nav.news': ['动态', 'News'],
     'nav.about': ['关于', 'About'],
+    'nav.feedback': ['建议', 'Feedback'],
+    'fb.title': ['提建议', 'Send feedback'],
+    'fb.lead': ['卡关了、发现了 bug、想玩什么样的新游戏，都可以写给我。每一条我都会认真看。', 'Stuck somewhere, found a bug, or want a certain kind of game? Write to me. I read every message.'],
+    'fb.type': ['类型', 'Type'],
+    'fb.t.idea': ['建议', 'Idea'],
+    'fb.t.bug': ['Bug', 'Bug'],
+    'fb.t.wish': ['想玩的游戏', 'Game wish'],
+    'fb.t.other': ['其他', 'Other'],
+    'fb.game': ['关于哪款游戏', 'Which game'],
+    'fb.game.none': ['不限', 'Not about a game'],
+    'fb.msg': ['想说的话', 'Your message'],
+    'fb.msg.ph': ['比如：第二层的门打不开，我的手机型号是……', "e.g. the door on floor 2 won't open, my phone is…"],
+    'fb.contact': ['怎么回复你（可选）', 'How to reply (optional)'],
+    'fb.contact.ph': ['邮箱、B 站 ID 或 QQ', 'Email, Bilibili ID or QQ'],
+    'fb.mail': ['写邮件发送', 'Send by email'],
+    'fb.issue': ['在 GitHub 提交', 'Post on GitHub'],
+    'fb.empty': ['先写点内容再发送吧。', 'Write something first.'],
+    'fb.sent.mail': ['已经打开你的邮件程序，确认后点发送就好。', 'Your email app is open. Press send there.'],
+    'fb.sent.issue': ['已在新标签页打开 GitHub，登录后点 Submit 就好。', 'GitHub is open in a new tab. Sign in and press Submit.'],
+    'fb.direct': ['直接写信', 'Email me directly'],
+    'fb.elsewhere': ['也可以在这里找我', 'Or find me here'],
+    'fb.subject': ['[孤独的边界] ', '[Sole Verge] '],
+    'fb.from': ['回复方式', 'Reply to'],
     'nav.cta': ['下载最新作', 'Get the latest'],
     'logo.sub': ['孤独的边界', '孤独的边界'],
     'mega.all': ['全部游戏', 'All games'],
@@ -119,6 +142,8 @@
     cup: '<path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M9 3c-1 1.2 1 2 0 3.4M13 3c-1 1.2 1 2 0 3.4"/>',
     dice: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>',
     caret: '<path d="m6 9 6 6 6-6"/>',
+    mail: '<rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>',
+    github: '<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>',
   };
   const I = Object.fromEntries(Object.entries(P).map(([k, d]) => [k, svg(d)]));
   I.down = svg(P.download, 'i i--down');
@@ -262,7 +287,7 @@
     const count = (id) => DATA.games.filter((g) => g.genres.includes(id)).length;
     mega.innerHTML = `<div class="shell mega__inner">
       <nav class="mega__links" aria-label="菜单">
-        <a href="${homeUrl('#top')}">${esc(t('nav.home'))}</a><a href="${homeUrl('#games')}">${esc(t('nav.games'))}</a><a href="${homeUrl('#news')}">${esc(t('nav.news'))}</a><a href="${homeUrl('#about')}">${esc(t('nav.about'))}</a>
+        <a href="${homeUrl('#top')}">${esc(t('nav.home'))}</a><a href="${homeUrl('#games')}">${esc(t('nav.games'))}</a><a href="${homeUrl('#news')}">${esc(t('nav.news'))}</a><a href="${homeUrl('#about')}">${esc(t('nav.about'))}</a><a href="${homeUrl('#feedback')}">${esc(t('nav.feedback'))}</a>
       </nav>
       <div class="mega__all">
         <h3>${esc(t('mega.all'))}</h3>
@@ -321,9 +346,11 @@
   }
 
   // Anchors measured in the hero render (fractions of the 2560x1440 frame): lantern flame, logo, the lit pool on the ground and the spotlight above frame
-  const HERO = { flame: [0.866, 0.485], logo: [0.70, 0.49], ground: [0.70, 0.67], key: [0.80, -2.41], poolW: 0.25 };
+  const HERO = { flame: [0.866, 0.485], logo: [0.70, 0.49], ground: [0.70, 0.67], key: [0.80, -2.41], poolW: 0.25,
+    // ends of the blood runs on the S and V: [u, v, length of the run in metres, v of the ground below]
+    drips: [[0.7045, 0.4525, 0.45, 0.700], [0.5615, 0.4621, 0.43, 0.664], [0.8237, 0.4016, 0.28, 0.688], [0.5709, 0.3935, 0.21, 0.664], [0.8277, 0.3829, 0.21, 0.688], [0.6169, 0.4091, 0.14, 0.668], [0.6073, 0.3713, 0.14, 0.666], [0.5753, 0.3733, 0.14, 0.664]] };
   // Live screen positions shared by the glow, fog, beam and ash
-  const scene = { on: false, lamp: { x: -1, y: -1 }, apex: { x: 0, y: 0 }, pool: { x: 0, y: 0 }, poolW: 0, flick: 1 };
+  const scene = { on: false, lamp: { x: -1, y: -1 }, apex: { x: 0, y: 0 }, pool: { x: 0, y: 0 }, logo: { x: 0, y: 0 }, poolW: 0, flick: 1, flash: 0, scale: 1, drips: [] };
   function mapHero() {
     const img = $('.hero__art img'), hero = $('.hero');
     if (!img || !hero) return;
@@ -332,12 +359,14 @@
     const pos = getComputedStyle(img).objectPosition.split(' ').map((v) => parseFloat(v) / 100);
     const ox = (cw - IW * s) * (Number.isFinite(pos[0]) ? pos[0] : 0.5), oy = (ch - IH * s) * (Number.isFinite(pos[1]) ? pos[1] : 0.5);
     const at = ([u, v]) => ({ x: ox + u * IW * s, y: oy + v * IH * s });
-    scene.on = true; scene.lamp = at(HERO.flame); scene.apex = at(HERO.key); scene.pool = at(HERO.ground); scene.poolW = HERO.poolW * IW * s;
-    const logo = at(HERO.logo);
+    scene.on = true; scene.lamp = at(HERO.flame); scene.apex = at(HERO.key); scene.pool = at(HERO.ground); scene.poolW = HERO.poolW * IW * s; scene.scale = s;
+    const logo = at(HERO.logo); scene.logo = logo;
+    scene.drips = HERO.drips.map(([u, v, len, fv]) => { const p = at([u, v]); return { x: p.x, y0: p.y, len, floor: at([u, fv]).y }; });
     hero.style.setProperty('--lx', `${((logo.x / hero.clientWidth) * 100).toFixed(1)}%`);
     hero.style.setProperty('--ly', `${((logo.y / hero.clientHeight) * 100).toFixed(1)}%`);
     const lamp = $('[data-lamp]');
     if (lamp) { lamp.style.left = `${scene.lamp.x}px`; lamp.style.top = `${scene.lamp.y}px`; lamp.style.transform = `scale(${Math.max(0.5, s * 1.4)})`; }
+    document.dispatchEvent(new Event('hero:mapped'));
   }
   // How much of the spotlight shaft covers a point (0..1), same cone the fog shader draws
   function inBeam(x, y) {
@@ -370,71 +399,161 @@
     requestAnimationFrame(tick);
   }
 
-  // Silent Hill ash: irregular grey flakes drifting down, tumbling; the ones crossing the spotlight light up
-  function initAsh(canvas) {
+  // Rain in three depths (streaks light up inside the spotlight), splashes on the wet ground, a little dust in the beam,
+  // and on the home page blood that gathers at the ends of the SV's drips and falls into the pool
+  function initWeather(canvas, opts = {}) {
     if (!canvas || quiet) return;
     const ctx = canvas.getContext('2d');
-    let w = 0, h = 0, flakes = [], raf = 0, visible = true, t = 0;
+    const withDrops = !!opts.drops, density = opts.density ?? 1;
+    let w = 0, h = 0, rain = [], motes = [], splashes = [], drops = [], raf = 0, visible = true, t = 0, last = performance.now();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const sprite = (blur) => {
-      const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
-      const n = 7 + (Math.random() * 5 | 0); g.translate(32, 32); if (blur) g.filter = `blur(${blur}px)`;
-      g.beginPath();
-      for (let i = 0; i < n; i++) { const a = (i / n) * 6.283, r = 10 + Math.random() * 12; g.lineTo(Math.cos(a) * r, Math.sin(a) * r * (0.55 + Math.random() * 0.45)); }
-      g.closePath(); g.fillStyle = '#fff'; g.fill();
-      g.globalCompositeOperation = 'destination-out'; g.fillStyle = 'rgba(0,0,0,.55)';
-      g.beginPath(); g.arc((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 6, 4 + Math.random() * 5, 0, 6.283); g.fill();
-      return c;
-    };
-    const sharp = Array.from({ length: 7 }, () => sprite(0)), soft = Array.from({ length: 4 }, () => sprite(4));
-    const L = [{ n: 120, r: [0.6, 1.3], v: [0.1, 0.24], a: [0.18, 0.4] }, { n: 75, r: [2.2, 5.2], v: [0.22, 0.5], a: [0.4, 0.75] }, { n: 6, r: [9, 16], v: [0.6, 1.0], a: [0.1, 0.2] }];
+    const L = [{ n: 260, len: [7, 13], v: [9, 13], a: [0.05, 0.13], wd: 0.7 }, { n: 110, len: [16, 28], v: [15, 20], a: [0.07, 0.17], wd: 1 }, { n: 14, len: [46, 80], v: [26, 34], a: [0.05, 0.1], wd: 2.2 }];
     const rnd = (m) => m[0] + Math.random() * (m[1] - m[0]);
-    const make = (layer, top) => {
-      const c = L[layer];
-      return { layer, x: Math.random() * w, y: top ? -30 - Math.random() * 60 : Math.random() * h, r: rnd(c.r), vy: rnd(c.v), a: rnd(c.a),
-        ph: Math.random() * 6.28, sp: 0.01 + Math.random() * 0.02, rot: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.03,
-        img: layer === 2 ? soft[Math.random() * soft.length | 0] : sharp[Math.random() * sharp.length | 0], seed: Math.random() * 100 };
-    };
+    const slant = 0.16;
+    const makeRain = (layer, top) => { const c = L[layer]; return { layer, x: Math.random() * (w + 200) - 100, y: top ? -Math.random() * 120 : Math.random() * h, len: rnd(c.len), v: rnd(c.v), a: rnd(c.a) }; };
+    const makeMote = () => ({ x: Math.random() * w, y: Math.random() * h, r: 0.6 + Math.random() * 1.2, ph: Math.random() * 6.28, sp: 0.004 + Math.random() * 0.01 });
+    const groundTop = () => (scene.on ? scene.pool.y - (scene.pool.y - scene.logo.y) * 0.35 : h * 0.62);
     const resize = () => {
       w = canvas.clientWidth; h = canvas.clientHeight;
       canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const k = Math.max(0.35, Math.min(1.3, (w * h) / 1300000));
-      flakes = [].concat(...L.map((c, i) => Array.from({ length: Math.round(c.n * k) }, () => make(i))));
+      const k = Math.max(0.3, Math.min(1.3, (w * h) / 1300000)) * density;
+      rain = [].concat(...L.map((c, i) => Array.from({ length: Math.round(c.n * k) }, () => makeRain(i))));
+      motes = Array.from({ length: Math.round(46 * k) }, makeMote);
+      if (withDrops) drops = (scene.drips || []).map((p, i) => ({ ...p, phase: 'grow', g: Math.random() * 0.6, wait: 400 + i * 380 + Math.random() * 2400, y: 0, vy: 0 }));
     };
-    const step = () => {
-      raf = 0; t += 1;
-      const gust = 0.12 + 0.22 * Math.sin(t * 0.003) + 0.3 * Math.max(0, Math.sin(t * 0.009 + 1.3)) ** 8;
+    const step = (now) => {
+      raf = 0; const dt = Math.min(50, now - last); last = now; t += dt / 16.7;
       ctx.clearRect(0, 0, w, h);
-      for (const f of flakes) {
-        const depth = [0.45, 1, 2][f.layer];
-        f.ph += f.sp; f.rot += f.spin;
-        f.y += f.vy * (0.75 + 0.25 * Math.sin(f.ph * 0.7)) - Math.max(0, Math.sin(t * 0.004 + f.seed)) * 0.08;
-        f.x += (gust + Math.sin(f.y * 0.011 + t * 0.01 + f.seed) * 0.18) * depth;
-        if (f.y > h + 40 || f.x > w + 40) Object.assign(f, make(f.layer, true), { x: Math.random() * (w + 300) - 300 });
-        const lit = inBeam(f.x, f.y) * scene.flick;
+      const flash = scene.flash || 0, fl = scene.flick;
+      // rain
+      ctx.lineCap = 'round';
+      for (const r of rain) {
+        r.y += r.v * dt / 16.7; r.x += r.v * slant * dt / 16.7;
+        if (r.y > h + 20) { Object.assign(r, makeRain(r.layer, true)); continue; }
+        const lit = inBeam(r.x, r.y) * fl;
         let warm = 0;
-        if (scene.lamp.x > 0) { const dx = f.x - scene.lamp.x, dy = f.y - scene.lamp.y; warm = Math.max(0, 1 - Math.hypot(dx, dy) / 180); }
-        const alpha = Math.min(1, f.a * (0.45 + 2.0 * lit + 0.8 * warm));
-        if (alpha < 0.02) continue;
-        ctx.globalAlpha = alpha;
-        if (f.layer === 0) {
-          const c = 130 + 110 * lit; ctx.fillStyle = `rgb(${c + 30 * warm | 0},${c | 0},${c - 10 + 4 * lit - 40 * warm | 0})`;
-          ctx.fillRect(f.x, f.y, f.r, f.r);
-          continue;
-        }
-        ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot); ctx.scale(1, 0.25 + 0.75 * Math.abs(Math.cos(f.ph)));
-        ctx.drawImage(f.img, -f.r, -f.r, f.r * 2, f.r * 2);
-        ctx.globalCompositeOperation = 'source-atop';
-        const c = 105 + 130 * lit; ctx.fillStyle = `rgb(${c + 60 * warm | 0},${c + 6 * lit | 0},${c + 14 * lit - 50 * warm | 0})`;
-        ctx.fillRect(-f.r, -f.r, f.r * 2, f.r * 2);
-        ctx.restore(); ctx.globalCompositeOperation = 'source-over';
+        if (scene.lamp.x > 0) { const dx = r.x - scene.lamp.x, dy = r.y - scene.lamp.y; warm = Math.max(0, 1 - Math.hypot(dx, dy) / 160); }
+        const a = Math.min(0.85, r.a * (1 + 4.2 * lit + 2.5 * warm + 5 * flash));
+        const c = 150 + 95 * Math.min(1, lit + flash);
+        ctx.strokeStyle = `rgba(${c + 40 * warm | 0},${c + 8 | 0},${c + 18 - 60 * warm | 0},${a.toFixed(3)})`;
+        ctx.lineWidth = L[r.layer].wd;
+        ctx.beginPath(); ctx.moveTo(r.x, r.y); ctx.lineTo(r.x - r.len * slant, r.y - r.len); ctx.stroke();
       }
-      ctx.globalAlpha = 1;
+      // splashes on the ground, mostly where the light falls
+      const gy = groundTop();
+      const spawn = (w / 1440) * 1.6 * density * dt / 16.7;
+      for (let i = 0; i < spawn + (Math.random() < spawn % 1 ? 1 : 0); i++) {
+        const y = gy + Math.random() ** 0.7 * (h - gy);
+        splashes.push({ x: Math.random() * w, y, age: 0, s: 0.5 + (y - gy) / Math.max(1, h - gy) });
+      }
+      for (const s of splashes) {
+        s.age += dt;
+        const k = s.age / 360, lit = Math.max(inBeam(s.x, s.y - 4), 0.15) * fl + flash;
+        const a = (1 - k) * Math.min(0.75, 0.12 + 0.6 * lit);
+        if (a <= 0) continue;
+        ctx.strokeStyle = `rgba(210,218,228,${a.toFixed(3)})`; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.ellipse(s.x, s.y, 1 + k * 7 * s.s, (1 + k * 7 * s.s) * 0.28, 0, 0, 6.283); ctx.stroke();
+        if (k < 0.5) { ctx.fillStyle = `rgba(220,226,234,${(a * 0.9).toFixed(3)})`; ctx.fillRect(s.x - 2 * k * s.s * 6, s.y - 9 * s.s * k * (1 - k) * 4, 1.2, 1.2); ctx.fillRect(s.x + 2 * k * s.s * 6, s.y - 7 * s.s * k * (1 - k) * 4, 1.2, 1.2); }
+      }
+      splashes = splashes.filter((s) => s.age < 360);
+      // dust that only shows in the light
+      for (const m of motes) {
+        m.ph += m.sp * dt / 16.7; m.x += Math.sin(m.ph) * 0.15 + 0.05; m.y += Math.cos(m.ph * 0.7) * 0.1 + 0.03;
+        if (m.x > w + 5) m.x = -5; if (m.y > h + 5) m.y = -5;
+        const lit = inBeam(m.x, m.y) * fl;
+        if (lit < 0.05) continue;
+        ctx.fillStyle = `rgba(226,232,240,${(0.5 * lit).toFixed(3)})`; ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, 6.283); ctx.fill();
+      }
+      // blood: a bead swells at the end of a drip, lets go, falls and splashes
+      if (withDrops && scene.on) {
+        const sc = scene.scale;
+        for (const d of drops) {
+          if (d.wait > 0) { d.wait -= dt; continue; }
+          const x = d.x, r0 = Math.max(1.8, 6.4 * sc);
+          if (d.phase === 'grow') {
+            d.g += dt / (2200 + d.len * 2600);
+            const r = r0 * (0.35 + 0.65 * Math.min(1, d.g));
+            drawDrop(x, d.y0 + r * 0.9 * Math.min(1, d.g), r, Math.min(1, d.g) * 0.4);
+            if (d.g >= 1) { d.phase = 'fall'; d.y = d.y0 + r0 * 0.9; d.vy = 0.4; }
+          } else if (d.phase === 'fall') {
+            d.vy += 0.032 * dt; d.y += d.vy * dt / 16.7;
+            drawDrop(x, d.y, r0 * 0.9, Math.min(1.6, d.vy / 6));
+            if (d.y >= d.floor) { d.phase = 'hit'; d.age = 0; }
+          } else {
+            d.age += dt; const k = d.age / 420;
+            ctx.fillStyle = `rgba(70,4,8,${(0.7 * (1 - k)).toFixed(3)})`;
+            ctx.beginPath(); ctx.ellipse(x, d.floor, r0 * (1 + k * 2.4), r0 * (1 + k * 2.4) * 0.3, 0, 0, 6.283); ctx.fill();
+            if (k >= 1) Object.assign(d, { phase: 'grow', g: 0, wait: 1500 + Math.random() * 5200 });
+          }
+        }
+      }
       if (visible) raf = requestAnimationFrame(step);
     };
+    function drawDrop(x, y, r, stretch) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(1, 1 + stretch);
+      const g = ctx.createRadialGradient(-r * 0.3, -r * 0.35, r * 0.1, 0, 0, r * 1.1);
+      g.addColorStop(0, 'rgba(150,18,24,.95)'); g.addColorStop(0.55, 'rgba(88,6,12,.92)'); g.addColorStop(1, 'rgba(30,1,4,.9)');
+      ctx.fillStyle = g; ctx.beginPath();
+      ctx.moveTo(0, -r * 1.7); ctx.bezierCurveTo(r * 0.55, -r * 0.9, r, -r * 0.2, r, r * 0.25); ctx.arc(0, r * 0.25, r, 0, Math.PI); ctx.bezierCurveTo(-r, -r * 0.2, -r * 0.55, -r * 0.9, 0, -r * 1.7);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,215,215,.55)'; ctx.beginPath(); ctx.arc(-r * 0.35, -r * 0.05, Math.max(0.6, r * 0.22), 0, 6.283); ctx.fill();
+      ctx.restore();
+    }
     resize(); window.addEventListener('resize', resize);
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(step); }).observe(canvas);
+    document.addEventListener('hero:mapped', resize);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) { last = performance.now(); raf = requestAnimationFrame(step); } }).observe(canvas);
     raf = requestAnimationFrame(step);
+  }
+
+  // Lightning: a pre-rendered "lit by lightning" pass is screen-blended over the hero, and a jagged bolt is drawn
+  // through a sky mask so it stays behind the spikes and the fence. Two pulses at most, never more than twice a second.
+  function initLightning(hero) {
+    const art = $('.hero__art', hero), flashImg = $('.hero__flash', hero), bolt = $('.hero__bolt', hero);
+    if (!art || !flashImg || !bolt || quiet) return;
+    const ctx = bolt.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let path = [];
+    const size = () => { bolt.width = bolt.clientWidth * dpr; bolt.height = bolt.clientHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    const jag = (x0, y0, x1, y1, rough, depth, out) => {
+      if (depth === 0) { out.push([x1, y1]); return; }
+      const mx = (x0 + x1) / 2 + (Math.random() - 0.5) * rough, my = (y0 + y1) / 2 + (Math.random() - 0.5) * rough * 0.3;
+      jag(x0, y0, mx, my, rough / 2, depth - 1, out); jag(mx, my, x1, y1, rough / 2, depth - 1, out);
+    };
+    const makeBolt = () => {
+      const W = bolt.clientWidth, H = bolt.clientHeight;
+      const x0 = W * (0.4 + Math.random() * 0.55), x1 = x0 + (Math.random() - 0.5) * W * 0.18, y1 = H * (0.36 + Math.random() * 0.12);
+      const main = [[x0, -10]]; jag(x0, -10, x1, y1, W * 0.12, 7, main);
+      const branches = [];
+      for (let i = 0; i < 3; i++) {
+        const s = main[(main.length * (0.2 + Math.random() * 0.5)) | 0], dir = Math.random() < 0.5 ? -1 : 1;
+        const b = [s]; jag(s[0], s[1], s[0] + dir * W * (0.05 + Math.random() * 0.08), s[1] + H * (0.06 + Math.random() * 0.1), W * 0.05, 5, b); branches.push(b);
+      }
+      return [main, ...branches];
+    };
+    const draw = (a) => {
+      ctx.clearRect(0, 0, bolt.clientWidth, bolt.clientHeight);
+      if (a <= 0) return;
+      path.forEach((p, i) => {
+        const main = i === 0;
+        for (const [wid, al, col] of [[26, 0.07, '150,175,255'], [11, 0.18, '185,205,255'], [4, 0.45, '215,228,255'], [main ? 2.4 : 1.3, 1, '246,249,255']]) {
+          ctx.strokeStyle = `rgba(${col},${(al * a * (main ? 1 : 0.7)).toFixed(3)})`; ctx.lineWidth = wid * (main ? 1 : 0.6); ctx.lineJoin = 'round';
+          ctx.beginPath(); p.forEach(([x, y], k) => (k ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+        }
+      });
+    };
+    const set = (a) => { scene.flash = a; flashImg.style.opacity = (a * 0.85).toFixed(3); hero.style.setProperty('--flash', a.toFixed(3)); draw(a); };
+    const strike = () => {
+      size(); path = makeBolt();
+      const seq = [[0, 1], [70, 0.15], [150, 0.75], [230, 0.3]];
+      seq.forEach(([at, a]) => setTimeout(() => set(a), at));
+      const t0 = performance.now() + 230;
+      const fade = (now) => { const k = Math.min(1, (now - t0) / 700); set(0.3 * (1 - k) ** 2); if (k < 1) requestAnimationFrame(fade); else set(0); };
+      setTimeout(() => requestAnimationFrame(fade), 230);
+      setTimeout(() => { art.classList.add('is-rumble'); setTimeout(() => art.classList.remove('is-rumble'), 650); }, 1100);
+      setTimeout(strike, 9000 + Math.random() * 13000);
+    };
+    window.addEventListener('resize', size);
+    setTimeout(strike, 3200);
   }
 
   // Light layer (screen-blended): rolling fog, the spotlight shaft with drifting dust, the lantern's warm bloom
@@ -444,7 +563,7 @@
     if (!gl) return;
     const vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     const fs = `precision mediump float;
-uniform vec2 uRes;uniform float uTime;uniform vec2 uLamp;uniform float uK;uniform vec2 uA;uniform vec2 uG;uniform float uW;uniform float uBeam;uniform float uFlick;
+uniform vec2 uRes;uniform float uTime;uniform vec2 uLamp;uniform float uK;uniform vec2 uA;uniform vec2 uG;uniform float uW;uniform float uBeam;uniform float uFlick;uniform float uFlash;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*n(p);p=m*p;a*=.5;}return v;}
@@ -470,6 +589,7 @@ void main(){
     col+=vec3(.66,.73,.84)*exp(-dot(e,e)*1.5)*.045*uFlick*uBeam;
   }
   if(uLamp.x>0.){vec2 dl=(p-uLamp)*vec2(asp,1.);float g=exp(-dot(dl,dl)*30.);col+=vec3(1.,.52,.22)*g*(.18+.1*smoothstep(.3,.8,f));}
+  col+=vec3(.7,.78,.95)*uFlash*(.16+.4*smoothstep(.25,.9,f))*(.35+.65*smoothstep(.2,.95,uv.y));
   gl_FragColor=vec4(col,1.);
 }`;
     const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
@@ -480,7 +600,7 @@ void main(){
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const U = (k) => gl.getUniformLocation(prog, k);
-    const u = Object.fromEntries(['uRes', 'uTime', 'uLamp', 'uK', 'uA', 'uG', 'uW', 'uBeam', 'uFlick'].map((k) => [k, U(k)]));
+    const u = Object.fromEntries(['uRes', 'uTime', 'uLamp', 'uK', 'uA', 'uG', 'uW', 'uBeam', 'uFlick', 'uFlash'].map((k) => [k, U(k)]));
     let raf = 0, visible = true; const t0 = performance.now();
     canvas.classList.add('is-live');
     const resize = () => { canvas.width = Math.max(2, canvas.clientWidth * 0.5 | 0); canvas.height = Math.max(2, canvas.clientHeight * 0.5 | 0); gl.viewport(0, 0, canvas.width, canvas.height); };
@@ -497,6 +617,7 @@ void main(){
       gl.uniform2f(u.uG, scene.pool.x / cw, scene.pool.y / ch);
       gl.uniform1f(u.uW, scene.poolW / cw);
       gl.uniform1f(u.uFlick, scene.flick);
+      gl.uniform1f(u.uFlash, on ? scene.flash : 0);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if (visible && !quiet) raf = requestAnimationFrame(frame);
     };
@@ -546,7 +667,8 @@ void main(){
           <li><a href="${homeUrl('#top')}">${esc(t('nav.home'))}</a></li>
           <li><a href="${homeUrl('#games')}">${esc(t('nav.games'))}</a></li>
           <li><a href="${homeUrl('#news')}">${esc(t('nav.news'))}</a></li>
-          <li><a href="${homeUrl('#about')}">${esc(t('nav.about'))}</a></li></ul></div>
+          <li><a href="${homeUrl('#about')}">${esc(t('nav.about'))}</a></li>
+          <li><a href="${homeUrl('#feedback')}">${esc(t('nav.feedback'))}</a></li></ul></div>
         <div><h4>${esc(t('footer.games'))}</h4><ul>
           ${byDate.map((g) => `<li><a href="${esc(gameUrl(g))}">${esc(pick(g.title))}</a></li>`).join('')}
           ${DATA.genres.slice(0, 4).map((g) => `<li><a href="${homeUrl('#cat-' + g.id)}">${esc(pick(g))}</a></li>`).join('')}</ul></div>
@@ -661,7 +783,67 @@ void main(){
         <div class="studio__links">${socials().map((s) => `<a class="btn btn--line" href="${esc(s.url)}" target="_blank" rel="noopener">${s.icon}${esc(t('links.' + s.key))}</a>`).join('')}</div>`;
     }
 
-    function render() { renderHero(); renderGames(); renderSpot(); renderNews(); renderStudio(); }
+    // Feedback: compose a message, then hand it to the visitor's email app or a prefilled GitHub issue (no server needed)
+    let fbState = { type: 'idea', game: '', msg: '', contact: '' };
+    function renderFeedback() {
+      const box = $('[data-feedback]');
+      if (!box) return;
+      const types = ['idea', 'bug', 'wish', 'other'];
+      const mail = (owner.email || '').trim();
+      box.innerHTML = `${ornaments(true)}
+        <div class="feedback__intro">
+          <span class="feedback__seal" aria-hidden="true">${I.mail}</span>
+          <p class="feedback__lead">${esc(t('fb.lead'))}</p>
+          ${mail ? `<p class="feedback__label">${esc(t('fb.direct'))}</p><a class="feedback__mail" href="mailto:${esc(mail)}">${esc(mail)}</a>` : ''}
+          <p class="feedback__label">${esc(t('fb.elsewhere'))}</p>
+          <div class="feedback__links">${socials().map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${x.icon}<span>${esc(t('links.' + x.key))}</span></a>`).join('')}</div>
+        </div>
+        <form class="feedback__form" novalidate>
+          <fieldset class="seg"><legend>${esc(t('fb.type'))}</legend>
+            ${types.map((k) => `<label class="seg__opt"><input type="radio" name="fbtype" value="${k}"${fbState.type === k ? ' checked' : ''}><span>${esc(t('fb.t.' + k))}</span></label>`).join('')}
+          </fieldset>
+          <label class="field"><span>${esc(t('fb.game'))}</span>
+            <select name="fbgame"><option value="">${esc(t('fb.game.none'))}</option>${byDate.map((g) => `<option value="${esc(g.id)}"${fbState.game === g.id ? ' selected' : ''}>${esc(pick(g.title))}</option>`).join('')}</select></label>
+          <label class="field"><span>${esc(t('fb.msg'))}</span>
+            <textarea name="fbmsg" rows="6" maxlength="3000" placeholder="${esc(t('fb.msg.ph'))}">${esc(fbState.msg)}</textarea></label>
+          <label class="field"><span>${esc(t('fb.contact'))}</span>
+            <input name="fbcontact" type="text" maxlength="120" autocomplete="email" placeholder="${esc(t('fb.contact.ph'))}" value="${esc(fbState.contact)}"></label>
+          <div class="feedback__actions">
+            ${mail ? `<button class="btn btn--light" type="submit" data-send="mail">${I.mail}${esc(t('fb.mail'))}</button>` : ''}
+            <button class="btn ${mail ? 'btn--line' : 'btn--light'}" type="${mail ? 'button' : 'submit'}" data-send="issue">${I.github}${esc(t('fb.issue'))}</button>
+          </div>
+          <p class="feedback__status" role="status" aria-live="polite" data-fb-status></p>
+        </form>`;
+      const form = $('form', box), status = $('[data-fb-status]', box);
+      const read = () => {
+        fbState = { type: (form.querySelector('input[name="fbtype"]:checked') || {}).value || 'idea', game: form.fbgame.value, msg: form.fbmsg.value.trim(), contact: form.fbcontact.value.trim() };
+        return fbState;
+      };
+      form.addEventListener('input', read);
+      const compose = () => {
+        const st = read();
+        const g = DATA.games.find((x) => x.id === st.game);
+        const subject = `${t('fb.subject')}${t('fb.t.' + st.type)}${g ? ' · ' + pick(g.title) : ''}`;
+        const body = `${st.msg}\n\n——\n${t('fb.type')}: ${t('fb.t.' + st.type)}${g ? `\n${t('fb.game')}: ${pick(g.title)} v${g.version}` : ''}${st.contact ? `\n${t('fb.from')}: ${st.contact}` : ''}`;
+        return { subject, body };
+      };
+      const send = (how) => {
+        if (read().msg.length < 2) { status.textContent = t('fb.empty'); status.dataset.tone = 'warn'; form.fbmsg.focus(); return; }
+        const { subject, body } = compose();
+        if (how === 'mail') {
+          location.href = `mailto:${encodeURIComponent(mail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          status.textContent = t('fb.sent.mail');
+        } else {
+          window.open(`https://github.com/${encodeURIComponent(owner.handle)}/save-room-arcade/issues/new?title=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener');
+          status.textContent = t('fb.sent.issue');
+        }
+        status.dataset.tone = 'ok';
+      };
+      form.addEventListener('submit', (e) => { e.preventDefault(); send(e.submitter?.dataset.send || (mail ? 'mail' : 'issue')); });
+      $$('[data-send="issue"][type="button"]', form).forEach((b) => b.addEventListener('click', () => send('issue')));
+    }
+
+    function render() { renderHero(); renderGames(); renderSpot(); renderNews(); renderStudio(); renderFeedback(); }
 
     const links = $$('.menu > a[href^="#"], .menu__trigger[data-target]');
     const io = new IntersectionObserver((entries) => {
@@ -669,7 +851,7 @@ void main(){
         links.forEach((a) => a.classList.toggle('is-active', (a.getAttribute('href') || '#' + a.dataset.target) === '#' + e.target.id));
       }
     }, { rootMargin: '-45% 0px -50% 0px' });
-    ['top', 'games', 'news', 'about'].forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+    ['top', 'games', 'news', 'about', 'feedback'].forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
     window.addEventListener('hashchange', readHash);
     window.addEventListener('resize', moveInk);
     document.fonts?.ready.then(moveInk);
@@ -680,7 +862,8 @@ void main(){
     readHash();
     initHeroScene();
     initFog($('.hero__fogfx'), 0.55, true);
-    initAsh($('.hero__ash'));
+    initWeather($('.hero__ash'), { drops: true });
+    initLightning($('.hero'));
     initReveal();
   }
 
@@ -796,7 +979,7 @@ void main(){
         <dialog class="lightbox" data-lightbox><img data-lightbox-img alt=""><button class="lightbox__close" type="button" data-close aria-label="${esc(t('game.close'))}">${I.close}</button></dialog>`;
       bindGallery();
       initFog($('.ghero .hero__fogfx'), 0.7);
-      initAsh($('.ghero .hero__ash'));
+      initWeather($('.ghero .hero__ash'), { density: 0.6 });
     }
 
     function bindGallery() {

@@ -29,6 +29,7 @@
         </div>
         <a href="#news"><span data-i18n="nav.news">动态</span></a>
         <a href="#about"><span data-i18n="nav.about">关于</span></a>
+        <a href="#feedback"><span data-i18n="nav.feedback">建议</span></a>
       </nav>
       <div class="nav__tools">
         <button class="lang" type="button" data-lang>EN</button>
@@ -52,6 +53,8 @@
     <section class="hero" id="top">
       <div class="hero__art">
         <img src="assets/site/hero.webp" srcset="assets/site/hero-1600.webp 1600w, assets/site/hero.webp 2560w" sizes="100vw" alt="" fetchpriority="high">
+        <img class="hero__flash" src="assets/site/hero-flash.webp" alt="" aria-hidden="true" loading="lazy">
+        <canvas class="hero__bolt" aria-hidden="true"></canvas>
       </div>
       <div class="hero__lamp" data-lamp aria-hidden="true"></div>
       <canvas class="hero__fogfx" aria-hidden="true"></canvas>
@@ -132,6 +135,13 @@
           <div class="studio__art"><img src="assets/site/sole-verge-keyart.webp" alt="Sole Verge 主视觉" width="2172" height="724" loading="lazy"></div>
           <div class="studio__body" data-studio></div>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="feedback">
+      <div class="shell">
+        <div class="head"><h2 class="head__title" data-i18n="fb.title">提建议</h2></div>
+        <div class="frame feedback" data-feedback></div>
       </div>
     </section>
   </main>
