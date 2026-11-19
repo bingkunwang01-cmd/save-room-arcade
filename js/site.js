@@ -79,6 +79,7 @@
     'footer.games': ['游戏', 'Games'],
     'footer.follow': ['关注', 'Follow'],
     'footer.made': ['用 Godot 和 Blender 制作', 'Made with Godot and Blender'],
+    'footer.credit': ['网站由孤独的边界和 Claude 一起制作', 'Site made by 孤独的边界 and Claude, together'],
     'game.crumb': ['游戏', 'Games'],
     'spec.version': ['版本', 'Version'],
     'spec.platform': ['平台', 'Platform'],
@@ -678,7 +679,7 @@ void main(){
         <div><h4>${esc(t('footer.follow'))}</h4><ul>
           ${socials().map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(t('links.' + s.key))}</a></li>`).join('')}</ul></div>
       </div>
-      <div class="shell footer__base"><span>© ${new Date().getFullYear()} Sole Verge　${esc(ownerName)}</span><span>${esc(t('footer.made'))}</span></div>`;
+      <div class="shell footer__base"><span>© ${new Date().getFullYear()} Sole Verge　${esc(ownerName)}</span><span>${esc(t('footer.made'))}　·　${esc(t('footer.credit'))}</span></div>`;
   }
 
   function initChrome(render) {

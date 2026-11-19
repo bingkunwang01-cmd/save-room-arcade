@@ -60,6 +60,8 @@ python -m http.server 8000
 - 主视觉、Logo 和旋转存档图标都用 Blender 渲染。主视觉里的锈铁、沥青等材质和提灯、轮椅、病床、铁丝网模型来自 Poly Haven（CC0）。
 - 首页的雾、聚光灯光柱、灯闪、雨丝和溅起的水花、从 SV 上滴落的血、打雷闪电都是实时叠加的（`js/site.js` 里的 `initFog` / `initWeather` / `initLightning`），位置跟着主视觉对齐（`HERO` 里的坐标来自渲染日志）。
 - 闪电用了两张额外的渲染：`assets/site/hero-flash.webp`（只有闪电照亮的画面）和 `assets/site/hero-mask.png`（天空遮罩，让闪电出现在铁刺和树后面）。系统开了“减少动态效果”时不会打闪电。
+- 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）；[缝合像素字体 Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font)，SIL Open Font License 1.1。
+- 像素字体只打包了网站现有文字用到的字。首页文案改了新字的话，需要重新生成子集（见 `fonts/fusion-pixel/`，用 fonttools 的 `pyftsubset`），否则缺的字会显示成普通字体。
 
 ## 建议 / 写邮件
 
@@ -67,5 +69,10 @@ python -m http.server 8000
 
 - **写邮件发送**：发到 `js/games.js` 里 `owner.email` 填的邮箱，点了会打开访客的邮件程序，标题和内容都已经填好。
 - **在 GitHub 提交**：打开这个仓库的新 Issue 页面，标题和内容同样预先填好。
-- 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）；[缝合像素字体 Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font)，SIL Open Font License 1.1。
-- 像素字体只打包了网站现有文字用到的字。首页文案改了新字的话，需要重新生成子集（见 `fonts/fusion-pixel/`，用 fonttools 的 `pyftsubset`），否则缺的字会显示成普通字体。
+
+## 贡献者
+
+- **孤独的边界**（[@bingkunwang01-cmd](https://github.com/bingkunwang01-cmd)）：游戏开发、美术方向、网站策划
+- **Claude**（Anthropic 的 AI）：网站设计与代码、Blender 主视觉渲染与特效
+
+这个网站是我们一起做的，提交记录里每次改动都署了两个人的名字。
