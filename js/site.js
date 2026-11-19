@@ -19,7 +19,7 @@
     'mega.allText': ['一个人做的游戏都在这里，全部免费。按类型挑一款吧。', 'Every game I have made, all free. Pick a genre.'],
     'mega.latest': ['最新', 'Latest'],
     'hero.title': ['欢迎来到<br>孤独的边界', 'Welcome to<br>Sole Verge'],
-    'hero.sub': ['一个人做的恐怖、悬疑与生存游戏，全部免费下载。雾很大，记得带上灯。', 'Horror, mystery and survival games made by one person, free to download. The fog is thick. Bring a lantern.'],
+    'hero.sub': ['一个人做的恐怖、悬疑与生存游戏，全部免费下载。<br>雾很大，记得带上灯。', 'Horror, mystery and survival games made by one person, free to download.<br>The fog is thick. Bring a lantern.'],
     'hero.download': ['立即下载', 'Download now'],
     'hero.browse': ['浏览全部游戏', 'Browse all games'],
     'hero.latest': ['最新版本：', 'Latest build: '],
@@ -141,6 +141,75 @@
   const chips = (g) => g.genres.map((id) => genreById[id]).filter(Boolean)
     .map((ge) => `<span class="chip" style="--c:${ge.color}">${esc(pick(ge))}</span>`).join('');
   const avatar = (size = 160) => `<img src="${esc(owner.avatar)}" alt="${esc(ownerName)}" width="${size}" height="${size}" onerror="this.onerror=null;this.src='${esc(owner.avatarFallback)}'">`;
+  // Liquid filter for the avatar rim and the logo: blur + alpha threshold fuses blobs, a faint sheen keeps it wet without looking like plastic
+  function injectBloodFilter() {
+    if ($('#sv-liquid-defs')) return;
+    const defs = document.createElement('div');
+    defs.id = 'sv-liquid-defs';
+    defs.innerHTML = `<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <filter id="sv-liquid-sm" x="-30%" y="-30%" width="160%" height="170%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
+        <feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10" result="goo"/>
+        <feGaussianBlur in="goo" stdDeviation=".8" result="h"/>
+        <feSpecularLighting in="h" surfaceScale="1.6" specularConstant=".55" specularExponent="42" lighting-color="#ffd9d9" result="sp"><feDistantLight azimuth="235" elevation="52"/></feSpecularLighting>
+        <feComposite in="sp" in2="goo" operator="in" result="spi"/>
+        <feComposite in="goo" in2="spi" operator="arithmetic" k1="0" k2=".92" k3=".55" k4="0"/>
+      </filter>
+    </svg>`;
+    document.body.appendChild(defs);
+  }
+
+  // Buttons: a thin, translucent film of dark blood rises on hover, its surface rolling gently with a wet edge
+  function bloodButtons(root = document) {
+    for (const btn of $$('.btn', root)) {
+      if (btn.dataset.blood) continue;
+      btn.dataset.blood = '1';
+      btn.addEventListener('pointerenter', () => build(btn), { once: true });
+      btn.addEventListener('focus', () => build(btn), { once: true });
+    }
+    function build(btn) {
+      if (btn.querySelector('.bleed')) return;
+      const w = btn.offsetWidth, h = btn.offsetHeight, id = 'bl' + Math.random().toString(36).slice(2, 8);
+      const len = Math.max(90, Math.round(w / 1.5)), len2 = Math.round(len * 1.35);
+      const surf = (amp, L, y0) => { let d = `M0 ${y0}`; for (let x = 0; x < w * 2 + L * 2; x += L) d += ` q ${L / 4} ${-amp} ${L / 2} 0 t ${L / 2} 0`; return d; };
+      const body = (amp, L, y0) => `${surf(amp, L, y0)} V ${h + 40} H 0 Z`;
+      const el = document.createElement('span');
+      el.className = 'bleed';
+      el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0"/><stop offset=".3"/><stop offset="1"/></linearGradient></defs>
+        <g class="bleed__rise" style="--h:${h + 12}px">
+          <g class="bleed__wave bleed__wave--back" style="--len:${len2}px"><path class="bleed__under" d="${body(1.2, len2, 5)}"/></g>
+          <g class="bleed__wave" style="--len:${len}px"><path class="bleed__body" d="${body(1.5, len, 6.5)}" fill="url(#${id})"/><path class="bleed__lip" d="${surf(1.5, len, 7.6)}"/><path class="bleed__shine" d="${surf(1.5, len, 6.2)}"/></g>
+        </g></svg>`;
+      btn.prepend(el);
+      requestAnimationFrame(() => btn.classList.add('has-bleed'));
+    }
+  }
+
+  // Avatar with a blood-soaked rim that keeps dripping
+  function bloodFrame(size = 96) {
+    const cx = 60, cy = 56, r = 48;
+    const drips = [[34, 20, 7.5, 0], [58, 44, 9, 2.4], [84, 30, 8, 1.1], [104, 52, 10.5, 3.6], [128, 26, 6.5, 5.2], [150, 14, 8, 6.4], [70, 34, 7, 4.4]];
+    const parts = drips.map(([deg, len, dur, delay], k) => {
+      const a = (deg * Math.PI) / 180;
+      const x = (cx + r * Math.cos(a)).toFixed(1), y = (cy + r * Math.sin(a)).toFixed(1);
+      return `<g class="drip" style="--l:${len}px;--d:${dur}s;--w:${delay}s">
+        <path d="M${x} ${y} v${len}" pathLength="100" stroke-width="${k % 2 ? 4 : 5}"/>
+        <circle class="drip__bulb" cx="${x}" cy="${y}" r="${k % 2 ? 3.6 : 4.4}"/>
+        <circle class="drip__drop" cx="${x}" cy="${y}" r="3.2"/>
+      </g>`;
+    }).join('');
+    const pool = Array.from({ length: 14 }, (_, i) => {
+      const a = Math.PI + (i / 13) * Math.PI; const rr = r + (i % 3) - 1;
+      return `<circle cx="${(cx + rr * Math.cos(a)).toFixed(1)}" cy="${(cy + rr * Math.sin(a)).toFixed(1)}" r="${(4 + (i * 7) % 4).toFixed(1)}"/>`;
+    }).join('');
+    return `<span class="bframe" style="--s:${size}px">${avatar(size)}
+      <svg class="bframe__svg" viewBox="0 0 120 170" aria-hidden="true"><g filter="url(#sv-liquid-sm)" class="bframe__liquid">
+        <circle class="bframe__ring" cx="${cx}" cy="${cy}" r="${r}"/>
+        <g class="bframe__pool">${pool}</g>
+        ${parts}
+      </g></svg></span>`;
+  }
   const ornaments = (rivets = false) => `<span class="orn orn--tl"></span><span class="orn orn--tr"></span><span class="orn orn--bl"></span><span class="orn orn--br"></span>${rivets ? '<span class="rivet rivet--a"></span><span class="rivet rivet--b"></span>' : ''}`;
 
   function gameCard(g, wide = false) {
@@ -251,30 +320,116 @@
     mark.closest('a')?.addEventListener('mouseenter', bleed);
   }
 
-  // Ash drifting through the hero, as in a certain foggy town
+  // Anchors measured in the hero render (fractions of the 2560x1440 frame): lantern flame, logo, the lit pool on the ground and the spotlight above frame
+  const HERO = { flame: [0.866, 0.485], logo: [0.70, 0.49], ground: [0.70, 0.67], key: [0.80, -2.41], poolW: 0.25 };
+  // Live screen positions shared by the glow, fog, beam and ash
+  const scene = { on: false, lamp: { x: -1, y: -1 }, apex: { x: 0, y: 0 }, pool: { x: 0, y: 0 }, poolW: 0, flick: 1 };
+  function mapHero() {
+    const img = $('.hero__art img'), hero = $('.hero');
+    if (!img || !hero) return;
+    const IW = 2560, IH = 1440, cw = img.clientWidth, ch = img.clientHeight;
+    const s = Math.max(cw / IW, ch / IH);
+    const pos = getComputedStyle(img).objectPosition.split(' ').map((v) => parseFloat(v) / 100);
+    const ox = (cw - IW * s) * (Number.isFinite(pos[0]) ? pos[0] : 0.5), oy = (ch - IH * s) * (Number.isFinite(pos[1]) ? pos[1] : 0.5);
+    const at = ([u, v]) => ({ x: ox + u * IW * s, y: oy + v * IH * s });
+    scene.on = true; scene.lamp = at(HERO.flame); scene.apex = at(HERO.key); scene.pool = at(HERO.ground); scene.poolW = HERO.poolW * IW * s;
+    const logo = at(HERO.logo);
+    hero.style.setProperty('--lx', `${((logo.x / hero.clientWidth) * 100).toFixed(1)}%`);
+    hero.style.setProperty('--ly', `${((logo.y / hero.clientHeight) * 100).toFixed(1)}%`);
+    const lamp = $('[data-lamp]');
+    if (lamp) { lamp.style.left = `${scene.lamp.x}px`; lamp.style.top = `${scene.lamp.y}px`; lamp.style.transform = `scale(${Math.max(0.5, s * 1.4)})`; }
+  }
+  // How much of the spotlight shaft covers a point (0..1), same cone the fog shader draws
+  function inBeam(x, y) {
+    if (!scene.on) return 0;
+    const ax = scene.pool.x - scene.apex.x, ay = scene.pool.y - scene.apex.y, L2 = ax * ax + ay * ay;
+    const rx = x - scene.apex.x, ry = y - scene.apex.y;
+    const t = (rx * ax + ry * ay) / L2;
+    if (t <= 0 || t > 1.12) return 0;
+    const lat = Math.abs(rx * ay - ry * ax) / Math.sqrt(L2), wv = t * scene.poolW;
+    const m = 1 - Math.min(1, Math.max(0, (lat - wv * 0.5) / (wv * 0.5)));
+    return m * (t > 1 ? 1 - (t - 1) / 0.12 : 1);
+  }
+  // An old lamp: steady most of the time, then a short stutter every few seconds
+  function initFlicker(hero) {
+    if (quiet) return;
+    let next = performance.now() + 4000, seq = [];
+    const tick = (now) => {
+      if (now > next && !seq.length) {
+        seq = Array.from({ length: 4 + (Math.random() * 6 | 0) }, () => [0.35 + Math.random() * 0.55, 40 + Math.random() * 110]);
+        next = now + 6000 + Math.random() * 9000;
+      }
+      if (seq.length) {
+        const [v, d] = seq[0]; scene.flick = v; seq[0][1] = d - 16;
+        if (seq[0][1] <= 0) seq.shift();
+        if (!seq.length) scene.flick = 1;
+      }
+      hero.style.setProperty('--flick', scene.flick.toFixed(3));
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Silent Hill ash: irregular grey flakes drifting down, tumbling; the ones crossing the spotlight light up
   function initAsh(canvas) {
     if (!canvas || quiet) return;
     const ctx = canvas.getContext('2d');
-    let w = 0, h = 0, flakes = [], raf = 0, visible = true;
+    let w = 0, h = 0, flakes = [], raf = 0, visible = true, t = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const make = (y) => ({ x: Math.random() * w, y: y ?? Math.random() * h, r: 0.6 + Math.random() * 2.2, vy: 0.15 + Math.random() * 0.45, sway: Math.random() * Math.PI * 2, sp: 0.004 + Math.random() * 0.01, a: 0.15 + Math.random() * 0.4, rot: Math.random() * Math.PI });
+    const sprite = (blur) => {
+      const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+      const n = 7 + (Math.random() * 5 | 0); g.translate(32, 32); if (blur) g.filter = `blur(${blur}px)`;
+      g.beginPath();
+      for (let i = 0; i < n; i++) { const a = (i / n) * 6.283, r = 10 + Math.random() * 12; g.lineTo(Math.cos(a) * r, Math.sin(a) * r * (0.55 + Math.random() * 0.45)); }
+      g.closePath(); g.fillStyle = '#fff'; g.fill();
+      g.globalCompositeOperation = 'destination-out'; g.fillStyle = 'rgba(0,0,0,.55)';
+      g.beginPath(); g.arc((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 6, 4 + Math.random() * 5, 0, 6.283); g.fill();
+      return c;
+    };
+    const sharp = Array.from({ length: 7 }, () => sprite(0)), soft = Array.from({ length: 4 }, () => sprite(4));
+    const L = [{ n: 120, r: [0.6, 1.3], v: [0.1, 0.24], a: [0.18, 0.4] }, { n: 75, r: [2.2, 5.2], v: [0.22, 0.5], a: [0.4, 0.75] }, { n: 6, r: [9, 16], v: [0.6, 1.0], a: [0.1, 0.2] }];
+    const rnd = (m) => m[0] + Math.random() * (m[1] - m[0]);
+    const make = (layer, top) => {
+      const c = L[layer];
+      return { layer, x: Math.random() * w, y: top ? -30 - Math.random() * 60 : Math.random() * h, r: rnd(c.r), vy: rnd(c.v), a: rnd(c.a),
+        ph: Math.random() * 6.28, sp: 0.01 + Math.random() * 0.02, rot: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.03,
+        img: layer === 2 ? soft[Math.random() * soft.length | 0] : sharp[Math.random() * sharp.length | 0], seed: Math.random() * 100 };
+    };
     const resize = () => {
       w = canvas.clientWidth; h = canvas.clientHeight;
       canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(160, (w * h) / 9000));
-      flakes = Array.from({ length: n }, () => make());
+      const k = Math.max(0.35, Math.min(1.3, (w * h) / 1300000));
+      flakes = [].concat(...L.map((c, i) => Array.from({ length: Math.round(c.n * k) }, () => make(i))));
     };
     const step = () => {
-      raf = 0;
+      raf = 0; t += 1;
+      const gust = 0.12 + 0.22 * Math.sin(t * 0.003) + 0.3 * Math.max(0, Math.sin(t * 0.009 + 1.3)) ** 8;
       ctx.clearRect(0, 0, w, h);
       for (const f of flakes) {
-        f.sway += f.sp; f.y += f.vy; f.x += Math.sin(f.sway) * 0.35 + 0.08; f.rot += 0.01;
-        if (f.y > h + 6 || f.x > w + 6) Object.assign(f, make(-6));
-        ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot);
-        ctx.fillStyle = `rgba(214, 210, 200, ${f.a})`;
-        ctx.beginPath(); ctx.ellipse(0, 0, f.r, f.r * 0.62, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
+        const depth = [0.45, 1, 2][f.layer];
+        f.ph += f.sp; f.rot += f.spin;
+        f.y += f.vy * (0.75 + 0.25 * Math.sin(f.ph * 0.7)) - Math.max(0, Math.sin(t * 0.004 + f.seed)) * 0.08;
+        f.x += (gust + Math.sin(f.y * 0.011 + t * 0.01 + f.seed) * 0.18) * depth;
+        if (f.y > h + 40 || f.x > w + 40) Object.assign(f, make(f.layer, true), { x: Math.random() * (w + 300) - 300 });
+        const lit = inBeam(f.x, f.y) * scene.flick;
+        let warm = 0;
+        if (scene.lamp.x > 0) { const dx = f.x - scene.lamp.x, dy = f.y - scene.lamp.y; warm = Math.max(0, 1 - Math.hypot(dx, dy) / 180); }
+        const alpha = Math.min(1, f.a * (0.45 + 2.0 * lit + 0.8 * warm));
+        if (alpha < 0.02) continue;
+        ctx.globalAlpha = alpha;
+        if (f.layer === 0) {
+          const c = 130 + 110 * lit; ctx.fillStyle = `rgb(${c + 30 * warm | 0},${c | 0},${c - 10 + 4 * lit - 40 * warm | 0})`;
+          ctx.fillRect(f.x, f.y, f.r, f.r);
+          continue;
+        }
+        ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot); ctx.scale(1, 0.25 + 0.75 * Math.abs(Math.cos(f.ph)));
+        ctx.drawImage(f.img, -f.r, -f.r, f.r * 2, f.r * 2);
+        ctx.globalCompositeOperation = 'source-atop';
+        const c = 105 + 130 * lit; ctx.fillStyle = `rgb(${c + 60 * warm | 0},${c + 6 * lit | 0},${c + 14 * lit - 50 * warm | 0})`;
+        ctx.fillRect(-f.r, -f.r, f.r * 2, f.r * 2);
+        ctx.restore(); ctx.globalCompositeOperation = 'source-over';
       }
+      ctx.globalAlpha = 1;
       if (visible) raf = requestAnimationFrame(step);
     };
     resize(); window.addEventListener('resize', resize);
@@ -282,21 +437,81 @@
     raf = requestAnimationFrame(step);
   }
 
-  // Keep the flicker glow on top of the lantern flame in the hero render
-  function initLamp() {
-    const lamp = $('[data-lamp]');
-    const img = $('.hero__art img');
-    if (!lamp || !img) return;
-    const U = 0.881, V = 0.5033, IW = 2560, IH = 1440;
-    const place = () => {
-      const cw = img.clientWidth, ch = img.clientHeight;
-      const s = Math.max(cw / IW, ch / IH);
-      const pos = getComputedStyle(img).objectPosition.split(' ').map((v) => parseFloat(v) / 100);
-      const ox = (cw - IW * s) * (pos[0] ?? 0.5), oy = (ch - IH * s) * (pos[1] ?? 0.5);
-      lamp.style.left = `${ox + U * IW * s}px`; lamp.style.top = `${oy + V * IH * s}px`;
-      lamp.style.transform = `scale(${Math.max(0.6, s * 1.6)})`;
+  // Light layer (screen-blended): rolling fog, the spotlight shaft with drifting dust, the lantern's warm bloom
+  function initFog(canvas, strength = 1, beam = false) {
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl', { alpha: false, antialias: false });
+    if (!gl) return;
+    const vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+    const fs = `precision mediump float;
+uniform vec2 uRes;uniform float uTime;uniform vec2 uLamp;uniform float uK;uniform vec2 uA;uniform vec2 uG;uniform float uW;uniform float uBeam;uniform float uFlick;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*n(p);p=m*p;a*=.5;}return v;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/uRes; float asp=uRes.x/uRes.y; vec2 p=vec2(uv.x,1.-uv.y);
+  vec2 q0=vec2(uv.x*asp,uv.y)*2.2; float t=uTime*.03;
+  vec2 q=vec2(fbm(q0+vec2(t,0.)),fbm(q0+vec2(-t*.6,t*.25)+5.2));
+  float f=fbm(q0*1.2+q*1.6+vec2(t*1.8,0.));
+  float ground=smoothstep(.6,.0,uv.y);
+  float band=exp(-pow((uv.y-.42)/.15,2.))*.4;
+  float d=smoothstep(.32,.85,f)*(.6*ground+band+.1)*uK;
+  vec3 col=mix(vec3(.42,.45,.46),vec3(.66,.68,.68),smoothstep(.3,.9,f))*d*.62;
+  if(uBeam>0.){
+    vec2 A=uA*vec2(asp,1.),G=uG*vec2(asp,1.),P=p*vec2(asp,1.),ax=G-A,rp=P-A;
+    float L2=dot(ax,ax),tt=dot(rp,ax)/L2,lat=abs(rp.x*ax.y-rp.y*ax.x)/sqrt(L2),wv=max(tt,0.)*uW*asp;
+    float m=(1.-smoothstep(wv*.5,wv,lat))*smoothstep(0.,.04,tt)*(1.-smoothstep(1.,1.1,tt));
+    vec2 rq=vec2(dot(rp,normalize(vec2(-ax.y,ax.x))),dot(rp,normalize(ax)));
+    float wisp=smoothstep(.42,.9,fbm(rq*vec2(9.,1.6)+vec2(t*.8,-t*3.)))*(.6+.4*fbm(P*4.+t));
+    float core=1.-smoothstep(0.,wv*.85,lat);
+    float b=m*(.18+wisp*1.1)*(.35+.65*core)*(.5+.5*(1.-tt))*uFlick;
+    col+=vec3(.76,.84,.96)*b*.13*uBeam;
+    vec2 e=(P-G)/vec2(uW*asp*1.1,uW*asp*.28);
+    col+=vec3(.66,.73,.84)*exp(-dot(e,e)*1.5)*.045*uFlick*uBeam;
+  }
+  if(uLamp.x>0.){vec2 dl=(p-uLamp)*vec2(asp,1.);float g=exp(-dot(dl,dl)*30.);col+=vec3(1.,.52,.22)*g*(.18+.1*smoothstep(.3,.8,f));}
+  gl_FragColor=vec4(col,1.);
+}`;
+    const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
+    const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = (k) => gl.getUniformLocation(prog, k);
+    const u = Object.fromEntries(['uRes', 'uTime', 'uLamp', 'uK', 'uA', 'uG', 'uW', 'uBeam', 'uFlick'].map((k) => [k, U(k)]));
+    let raf = 0, visible = true; const t0 = performance.now();
+    canvas.classList.add('is-live');
+    const resize = () => { canvas.width = Math.max(2, canvas.clientWidth * 0.5 | 0); canvas.height = Math.max(2, canvas.clientHeight * 0.5 | 0); gl.viewport(0, 0, canvas.width, canvas.height); };
+    const frame = () => {
+      raf = 0;
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+      gl.uniform2f(u.uRes, canvas.width, canvas.height);
+      gl.uniform1f(u.uTime, quiet ? 40 : (performance.now() - t0) / 1000);
+      gl.uniform1f(u.uK, strength);
+      const on = beam && scene.on;
+      gl.uniform2f(u.uLamp, on && scene.lamp.x > 0 ? scene.lamp.x / cw : -1, on ? scene.lamp.y / ch : -1);
+      gl.uniform1f(u.uBeam, on ? 1 : 0);
+      gl.uniform2f(u.uA, scene.apex.x / cw, scene.apex.y / ch);
+      gl.uniform2f(u.uG, scene.pool.x / cw, scene.pool.y / ch);
+      gl.uniform1f(u.uW, scene.poolW / cw);
+      gl.uniform1f(u.uFlick, scene.flick);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (visible && !quiet) raf = requestAnimationFrame(frame);
     };
-    place(); window.addEventListener('resize', place);
+    resize(); window.addEventListener('resize', () => { resize(); if (!raf) raf = requestAnimationFrame(frame); });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(frame); }).observe(canvas);
+    raf = requestAnimationFrame(frame);
+  }
+
+  // Keep every hero effect pinned to the render as the image is cover-fitted
+  function initHeroScene() {
+    const hero = $('.hero');
+    if (!hero) return;
+    mapHero(); window.addEventListener('resize', mapHero);
+    $('.hero__art img')?.addEventListener('load', mapHero);
+    initFlicker(hero);
   }
 
   function initReveal() {
@@ -342,6 +557,10 @@
   }
 
   function initChrome(render) {
+    injectBloodFilter();
+    const rebind = () => bloodButtons();
+    new MutationObserver(rebind).observe(document.body, { childList: true, subtree: true });
+    rebind();
     const nav = $('.nav');
     const onScroll = () => nav && nav.classList.toggle('is-scrolled', window.scrollY > 30);
     onScroll();
@@ -437,7 +656,7 @@
 
     function renderStudio() {
       $('[data-studio]').innerHTML = `
-        <div class="studio__who">${avatar(84)}<div><h3 class="studio__name">${esc(ownerName)}</h3><p class="studio__handle">Sole Verge　@${esc(owner.handle)}</p></div></div>
+        <div class="studio__who">${bloodFrame(88)}<div><h3 class="studio__name">${esc(ownerName)}</h3><p class="studio__handle">Sole Verge　@${esc(owner.handle)}</p></div></div>
         <p class="studio__text">${esc(t('studio.text'))}</p>
         <div class="studio__links">${socials().map((s) => `<a class="btn btn--line" href="${esc(s.url)}" target="_blank" rel="noopener">${s.icon}${esc(t('links.' + s.key))}</a>`).join('')}</div>`;
     }
@@ -459,8 +678,9 @@
     applyStatic();
     render();
     readHash();
+    initHeroScene();
+    initFog($('.hero__fogfx'), 0.55, true);
     initAsh($('.hero__ash'));
-    initLamp();
     initReveal();
   }
 
@@ -484,6 +704,7 @@
       main.innerHTML = `
         <section class="ghero">
           <div class="ghero__art"><img src="${esc(g.cover)}" alt="" fetchpriority="high"></div>
+          <canvas class="hero__fogfx" aria-hidden="true"></canvas>
           <canvas class="hero__ash" aria-hidden="true"></canvas>
           <div class="shell ghero__content">
             <nav class="crumbs" aria-label="breadcrumb"><a href="index.html#games">${esc(t('game.crumb'))}</a><span aria-hidden="true">/</span><span>${esc(pick(g.title))}</span></nav>
@@ -574,6 +795,7 @@
 
         <dialog class="lightbox" data-lightbox><img data-lightbox-img alt=""><button class="lightbox__close" type="button" data-close aria-label="${esc(t('game.close'))}">${I.close}</button></dialog>`;
       bindGallery();
+      initFog($('.ghero .hero__fogfx'), 0.7);
       initAsh($('.ghero .hero__ash'));
     }
 

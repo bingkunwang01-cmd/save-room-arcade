@@ -13,7 +13,7 @@
 | `js/games.js` | **所有游戏的数据都在这里**，加新游戏只改这个文件 |
 | `js/site.js` | 页面逻辑（一般不用改） |
 | `css/site.css` | 样式 |
-| `assets/site/hero.webp` | 首页主视觉（Blender Cycles 渲染：带血的旧金属 SV 字标、锈铁链、维多利亚提灯、雾中的铁丝网和路灯） |
+| `assets/site/hero.webp` | 首页主视觉（Blender Cycles 渲染：顶光聚光灯下的锈蚀 SV 字标、一圈从地里冒出的铁刺、浸湿的纸、煤油提灯，后期加了辉光、色差、暗角和颗粒） |
 | `assets/site/blood.svg` | 左上角 Logo 不定时渗血的血迹贴图 |
 | `assets/site/sole-verge-keyart.webp` | Sole Verge 主视觉横幅（关于区） |
 | `assets/games/<游戏id>/` | 每款游戏的封面、截图、旋转存档图标、短片 |
@@ -57,5 +57,6 @@ python -m http.server 8000
 
 ## 素材与授权
 
-- 主视觉、Logo 和旋转存档图标都用 Blender 渲染。
+- 主视觉、Logo 和旋转存档图标都用 Blender 渲染。主视觉里的锈铁、沥青等材质和提灯、轮椅、病床、铁丝网模型来自 Poly Haven（CC0）。
+- 首页的雾、聚光灯光柱、灯闪和灰烬粒子是实时叠加的（`js/site.js` 里的 `initFog` / `initAsh`），位置跟着主视觉对齐（`HERO` 里的坐标来自渲染日志）。
 - 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）。
