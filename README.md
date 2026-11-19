@@ -17,7 +17,7 @@
 | `assets/site/blood.svg` | 左上角 Logo 不定时渗血的血迹贴图 |
 | `assets/site/sole-verge-keyart.webp` | Sole Verge 主视觉横幅（关于区） |
 | `assets/games/<游戏id>/` | 每款游戏的封面、截图、旋转存档图标、短片 |
-| `fonts/` | Cinzel（品牌字）、思源宋体 Bold（标题）、思源黑体 Bold（按钮和导航），中文按需分片加载，均为 SIL OFL 授权 |
+| `fonts/` | Cinzel（品牌字）、思源宋体 Bold（标题）、思源黑体 Bold（按钮和导航）、缝合像素字体 12px（首页左侧的像素标题和文字，只保留了网站用到的字），均为 SIL OFL 授权 |
 | `hollow-ward.html` | 旧链接，会自动跳到新的空寂病院页面 |
 
 导航里“游戏”展开就是分类菜单，分类来自 `js/games.js` 的 `genres`。首页提灯的闪光位置写在 `js/site.js` 的 `initLamp`（按 2560×1440 主视觉的比例坐标），换主视觉时一起调整。
@@ -65,6 +65,7 @@ python -m http.server 8000
 
 首页「建议」栏可以选类型、选游戏、写内容，然后：
 
-- **写邮件发送**：在 `js/games.js` 的 `owner.email` 填上你的邮箱后才会出现，点了会打开访客的邮件程序，标题和内容都已经填好。
+- **写邮件发送**：发到 `js/games.js` 里 `owner.email` 填的邮箱，点了会打开访客的邮件程序，标题和内容都已经填好。
 - **在 GitHub 提交**：打开这个仓库的新 Issue 页面，标题和内容同样预先填好。
-- 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）。
+- 字体：[Cinzel](https://github.com/NDISCOVER/Cinzel)、[Noto Serif SC](https://github.com/notofonts/noto-cjk) 与 Noto Sans SC，SIL Open Font License 1.1（经 Fontsource 分片）；[缝合像素字体 Fusion Pixel](https://github.com/TakWolf/fusion-pixel-font)，SIL Open Font License 1.1。
+- 像素字体只打包了网站现有文字用到的字。首页文案改了新字的话，需要重新生成子集（见 `fonts/fusion-pixel/`，用 fonttools 的 `pyftsubset`），否则缺的字会显示成普通字体。

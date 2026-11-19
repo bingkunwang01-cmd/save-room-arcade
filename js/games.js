@@ -14,12 +14,12 @@ window.SAVE_ROOM = {
     avatarFallback: 'assets/site/avatar.webp',
     links: {
       github: 'https://github.com/bingkunwang01-cmd',
-      // 把下面两个换成你的主页链接即可
-      douyin: '',
-      bilibili: '',
+      douyin: 'https://v.douyin.com/FZuIHI8DvAE/',
+      bilibili: 'https://b23.tv/uol5fhZ',
+      x: 'https://x.com/Lonelnx',
     },
-    // 「建议」里“写邮件发送”会发到这个邮箱；留空则只显示 GitHub 提交
-    email: '',
+    // 「建议」里“写邮件发送”会发到这个邮箱
+    email: 'bingkunwang01@gmail.com',
   },
 
   // 游戏分类。color 是这个分类在网站上的标记色

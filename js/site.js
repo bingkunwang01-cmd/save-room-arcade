@@ -42,7 +42,7 @@
     'mega.allText': ['一个人做的游戏都在这里，全部免费。按类型挑一款吧。', 'Every game I have made, all free. Pick a genre.'],
     'mega.latest': ['最新', 'Latest'],
     'hero.title': ['欢迎来到<br>孤独的边界', 'Welcome to<br>Sole Verge'],
-    'hero.sub': ['一个人做的恐怖、悬疑与生存游戏，全部免费下载。<br>雾很大，记得带上灯。', 'Horror, mystery and survival games made by one person, free to download.<br>The fog is thick. Bring a lantern.'],
+    'hero.sub': ['一个人做的<wbr>恐怖、<wbr>悬疑与<wbr>生存游戏，<wbr>全部免费下载。<br>雾很大，<wbr>记得带上灯。', 'Horror, mystery and survival games made by one person, free to download.<br>The fog is thick. Bring a lantern.'],
     'hero.download': ['立即下载', 'Download now'],
     'hero.browse': ['浏览全部游戏', 'Browse all games'],
     'hero.latest': ['最新版本：', 'Latest build: '],
@@ -73,6 +73,7 @@
     'links.github': ['GitHub', 'GitHub'],
     'links.bilibili': ['哔哩哔哩', 'Bilibili'],
     'links.douyin': ['抖音', 'Douyin'],
+    'links.x': ['X', 'X'],
     'footer.blurb': ['孤独的边界的独立游戏。一个人开发，全部免费。', 'Independent games by 孤独的边界. Made solo, always free.'],
     'footer.site': ['网站', 'Site'],
     'footer.games': ['游戏', 'Games'],
@@ -142,6 +143,7 @@
     cup: '<path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M9 3c-1 1.2 1 2 0 3.4M13 3c-1 1.2 1 2 0 3.4"/>',
     dice: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>',
     caret: '<path d="m6 9 6 6 6-6"/>',
+    x: '<path d="M4 4l16 16M20 4 4 20" opacity="0"/><path d="M4.5 4h4.2l10.8 16h-4.2z"/><path d="M19.5 4 13.4 11M10.6 13 4.5 20"/>',
     mail: '<rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>',
     github: '<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>',
   };
@@ -156,6 +158,7 @@
     { key: 'github', icon: I.code, url: owner.links.github },
     { key: 'bilibili', icon: I.screen, url: owner.links.bilibili || `https://search.bilibili.com/upuser?keyword=${encodeURIComponent(ownerName)}` },
     { key: 'douyin', icon: I.note, url: owner.links.douyin || `https://www.douyin.com/search/${encodeURIComponent(ownerName)}?type=user` },
+    ...(owner.links.x ? [{ key: 'x', icon: I.x, url: owner.links.x }] : []),
   ];
   const genreById = Object.fromEntries(DATA.genres.map((g) => [g.id, g]));
   const byDate = [...DATA.games].sort((a, b) => b.updated.localeCompare(a.updated));
@@ -575,7 +578,7 @@ void main(){
   float ground=smoothstep(.6,.0,uv.y);
   float band=exp(-pow((uv.y-.42)/.15,2.))*.4;
   float d=smoothstep(.32,.85,f)*(.6*ground+band+.1)*uK;
-  vec3 col=mix(vec3(.42,.45,.46),vec3(.66,.68,.68),smoothstep(.3,.9,f))*d*.62;
+  vec3 col=mix(vec3(.5,.4,.4),vec3(.7,.62,.61),smoothstep(.3,.9,f))*d*.62;
   if(uBeam>0.){
     vec2 A=uA*vec2(asp,1.),G=uG*vec2(asp,1.),P=p*vec2(asp,1.),ax=G-A,rp=P-A;
     float L2=dot(ax,ax),tt=dot(rp,ax)/L2,lat=abs(rp.x*ax.y-rp.y*ax.x)/sqrt(L2),wv=max(tt,0.)*uW*asp;
